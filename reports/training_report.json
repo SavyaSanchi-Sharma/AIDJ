@@ -1,0 +1,25 @@
+{
+  "energy_regression": {
+    "r2_score": 0.9959332194324518,
+    "mae": 0.005216540114196451,
+    "rmse": 0.007519033397097927
+  },
+  "energy_classification": {
+    "accuracy": 0.989769820971867,
+    "precision": 0.9891705007579147,
+    "recall": 0.989769820971867,
+    "f1": 0.9892148679792124,
+    "report": "              precision    recall  f1-score   support\n\n           0       0.99      1.00      0.99       381\n           1       0.88      0.70      0.78        10\n\n    accuracy                           0.99       391\n   macro avg       0.93      0.85      0.89       391\nweighted avg       0.99      0.99      0.99       391\n"
+  },
+  "mood_classification": {
+    "accuracy": 0.9846547314578005,
+    "precision": 0.9793563512361466,
+    "recall": 0.9846547314578005,
+    "f1": 0.9818374392124327,
+    "report": "              precision    recall  f1-score   support\n\n        calm       0.94      0.83      0.88        18\n       happy       0.00      0.00      0.00         2\n         sad       0.99      1.00      0.99       371\n\n    accuracy                           0.98       391\n   macro avg       0.64      0.61      0.62       391\nweighted avg       0.98      0.98      0.98       391\n"
+  },
+  "meta": {
+    "train_samples": 1551,
+    "test_samples": 391
+  }
+}
