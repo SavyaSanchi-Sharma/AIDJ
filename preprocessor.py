@@ -129,6 +129,21 @@ def process_dataset():
 
     return df
 
+def extract_features_from_file(audio_path):
+    y, sr = preprocess(audio_path)
+    duration = librosa.get_duration(y=y, sr=sr)
+    segments = []
+    for start in np.arange(0, duration, HOP_DURATION):
+        end = start + SEGMENT_DURATION
+        if end > duration:
+            break
+        seg = y[int(start * sr): int(end * sr)]
+        feats = extract_features(seg, sr)
+        feats["start"] = round(float(start), 2)
+        feats["end"] = round(float(end), 2)
+        segments.append(feats)
+    return segments
+
 
 # ---------- MAIN ----------
 if __name__ == "__main__":

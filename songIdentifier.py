@@ -5,6 +5,11 @@ import sqlite3
 import time
 import google.generativeai as genai
 from spotdl import Spotdl
+from dotenv import load_dotenv
+load_dotenv()
+gemini_api_key=os.getenv("GEMINI_API_KEY")
+spotify_client_id=os.getenv("SPOTIFY_CLIENT_ID")
+spotify_client_secret=os.getenv("SPOTIFY_CLIENT_SECRET")
 
 class MusicPipelineStage1:
     """
@@ -509,17 +514,23 @@ Remember: ONLY return the JSON array, nothing else."""
 # =============================================================================
 # MAIN EXECUTION
 # =============================================================================
+def populateDB():
+    pipeline = MusicPipelineStage1(
+        gemini_api_key=gemini_api_key,
+        spotify_client_id=spotify_client_id,
+        spotify_client_secret=spotify_client_secret,
+        db_path="music_tracks.db",
+        download_dir="downloaded_music"
+    )
+    pipeline.populate_db_from_folder()
 
-if __name__ == "__main__":
+
+def get_songs(user_input:str):
     # Configuration
-    GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "YOUR_API_KEY_HERE")
-    SPOTIFY_CLIENT_ID = "YOUR_SPOTIFY_CLIENT_ID"
-    SPOTIFY_CLIENT_SECRET = "YOUR_SPOTIFY_CLIENT_SECRET"
+    GEMINI_API_KEY = gemini_api_key
+    SPOTIFY_CLIENT_ID = spotify_client_id
+    SPOTIFY_CLIENT_SECRET = spotify_client_secret
     
-    if not GEMINI_API_KEY or GEMINI_API_KEY == "YOUR_API_KEY_HERE":
-        print("ERROR: GEMINI_API_KEY not set!")
-        print("Set it with: export GEMINI_API_KEY='your_key'")
-        exit(1)
     
     # Initialize pipeline
     print("\n🎵 Music Pipeline Stage 1 - Track Discovery & Download")
@@ -533,18 +544,10 @@ if __name__ == "__main__":
         download_dir="downloaded_music"
     )
     
-    # Option 1: Populate database from existing files
-    print("\nOption: Populate database from existing downloads")
-    response = input("Do you want to scan downloaded_music/ and add existing files to database? (y/n): ")
-    if response.lower() == 'y':
-        pipeline.populate_db_from_folder()
     
-    # Option 2: Process user prompt
-    print("\nOption: Process new music request")
-    user_prompt = input("Enter your music request (or press Enter to skip): ")
     
-    if user_prompt.strip():
-        tracks = pipeline.process_user_prompt(user_prompt)
+    if user_input.strip():
+        tracks = pipeline.process_user_prompt(user_input)
         
         # Display results
         print("\n📋 Tracks ready for next stage:")

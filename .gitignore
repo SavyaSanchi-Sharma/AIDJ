@@ -4,3 +4,5 @@ music_docs.md
 /datasets/archive.zip
 /Data/
 /audio/
+project.env
+/__pycache__/
