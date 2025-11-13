@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 import os, json, joblib, numpy as np, pandas as pd
 from collections import Counter
 from sklearn.model_selection import GroupShuffleSplit
@@ -35,9 +32,9 @@ def load_data():
     contrast = df["spectral_contrast"].fillna(df["spectral_contrast"].median())
     def mood_rule(i):
         e = y_reg.iloc[i]; t = tempo.iloc[i]; c = chroma.iloc[i]; s = contrast.iloc[i]
-        if e > 0.7 and t > 110: return "energetic"
-        if e < 0.3 and t < 90: return "calm"
-        if c > 0.6 and s < 20: return "happy"
+        if e > 0.6 and t > 110: return "energetic"
+        if e < 0.2 and t < 90: return "calm"
+        if c > 0.5 and s < 20: return "happy"
         return "sad"
     y_mood = pd.Series([mood_rule(i) for i in range(len(df))], index=df.index, name="y_mood")
     groups = pd.Series(df["file_name"].values, index=df.index, name="group")
