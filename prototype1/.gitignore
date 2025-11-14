@@ -7,7 +7,9 @@
 # Environment files
 .env
 .env.local
-.env.example
+
+# Config files with secrets
+labelling/scripts/config.json
 
 # Dependencies
 node_modules/
