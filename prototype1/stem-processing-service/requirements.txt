@@ -1,0 +1,33 @@
+# Task Queue
+celery[redis]==5.3.4
+redis==5.0.1
+
+# Audio Processing & ML
+torch==2.1.0
+torchaudio==2.1.0
+demucs==4.0.1
+librosa==0.10.1
+essentia-tensorflow==2.1b6.dev1110
+numpy==1.25.2
+scipy==1.11.4
+
+# Vector Operations
+faiss-gpu==1.7.4
+
+# Database
+sqlalchemy==2.0.23
+psycopg2-binary==2.9.9
+pgvector==0.2.4
+
+# Utilities
+python-dotenv==1.0.0
+structlog==23.2.0
+pydantic==2.5.0
+
+# Audio Utilities
+soundfile==0.12.1
+audioread==3.0.1
+
+# Development
+pytest==7.4.3
+pytest-asyncio==0.21.1

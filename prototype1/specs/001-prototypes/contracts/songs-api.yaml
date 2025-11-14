@@ -1,0 +1,333 @@
+openapi: 3.0.3
+info:
+  title: Songs API
+  version: 0.1.0
+  description: API for song upload, processing, and retrieval
+
+paths:
+  /songs:
+    post:
+      summary: Upload a new song
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: Audio file (mp3, wav, flac)
+                title:
+                  type: string
+                  maxLength: 200
+                artist:
+                  type: string
+                  maxLength: 200
+                album:
+                  type: string
+                  maxLength: 200
+              required:
+                - file
+                - title
+                - artist
+      responses:
+        '201':
+          description: Song uploaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Song'
+        '400':
+          description: Invalid file or parameters
+        '413':
+          description: File too large (max 100MB)
+        '422':
+          description: Unsupported audio format
+
+    get:
+      summary: List songs with filtering and pagination
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+        - name: key_signature
+          in: query
+          schema:
+            type: string
+            example: "C Major"
+        - name: bpm_min
+          in: query
+          schema:
+            type: number
+            minimum: 60
+        - name: bpm_max
+          in: query
+          schema:
+            type: number
+            maximum: 200
+        - name: processing_status
+          in: query
+          schema:
+            type: string
+            enum: [pending, processing, completed, failed]
+      responses:
+        '200':
+          description: List of songs
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  songs:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Song'
+                  total:
+                    type: integer
+                  limit:
+                    type: integer
+                  offset:
+                    type: integer
+
+  /songs/{song_id}:
+    get:
+      summary: Get song details
+      parameters:
+        - name: song_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Song details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SongDetail'
+        '404':
+          description: Song not found
+
+    delete:
+      summary: Delete a song
+      parameters:
+        - name: song_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Song deleted successfully
+        '404':
+          description: Song not found
+
+  /songs/{song_id}/musical-dna:
+    get:
+      summary: Get Musical DNA analysis for a song
+      parameters:
+        - name: song_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Musical DNA analysis
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MusicalDNA'
+        '404':
+          description: Song or analysis not found
+        '202':
+          description: Analysis in progress
+
+  /songs/{song_id}/stems:
+    get:
+      summary: Get separated stems for a song
+      parameters:
+        - name: song_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: List of stems
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Stem'
+        '404':
+          description: Song not found
+        '202':
+          description: Stem separation in progress
+
+components:
+  schemas:
+    Song:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        artist:
+          type: string
+        album:
+          type: string
+          nullable: true
+        duration:
+          type: number
+          description: Duration in seconds
+        file_format:
+          type: string
+          enum: [mp3, wav, flac, aac]
+        file_size:
+          type: integer
+          description: File size in bytes
+        upload_timestamp:
+          type: string
+          format: date-time
+        processing_status:
+          type: string
+          enum: [pending, processing, completed, failed]
+        user_id:
+          type: string
+          format: uuid
+          nullable: true
+      required:
+        - id
+        - title
+        - artist
+        - duration
+        - file_format
+        - file_size
+        - upload_timestamp
+        - processing_status
+
+    SongDetail:
+      allOf:
+        - $ref: '#/components/schemas/Song'
+        - type: object
+          properties:
+            musical_dna:
+              $ref: '#/components/schemas/MusicalDNA'
+            stems:
+              type: array
+              items:
+                $ref: '#/components/schemas/Stem'
+
+    MusicalDNA:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        song_id:
+          type: string
+          format: uuid
+        key_signature:
+          type: string
+          example: "C Major"
+        camelot_key:
+          type: string
+          example: "8A"
+        bpm:
+          type: number
+          minimum: 60
+          maximum: 200
+        time_signature:
+          type: string
+          example: "4/4"
+        energy_curve:
+          type: array
+          items:
+            type: number
+            minimum: 0
+            maximum: 1
+        loudness_lufs:
+          type: number
+          description: Integrated loudness in LUFS
+        dynamic_range:
+          type: number
+          description: Dynamic range in dB
+        spectral_centroid:
+          type: array
+          items:
+            type: number
+        created_timestamp:
+          type: string
+          format: date-time
+
+    Stem:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        song_id:
+          type: string
+          format: uuid
+        stem_type:
+          type: string
+          enum: [vocals, drums, bass, other, harmony]
+        file_path:
+          type: string
+          description: Path to stem audio file
+        confidence_score:
+          type: number
+          minimum: 0
+          maximum: 1
+          description: Separation quality score
+        rms_energy:
+          type: number
+          description: Root mean square energy
+        features:
+          $ref: '#/components/schemas/StemFeatures'
+
+    StemFeatures:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        stem_id:
+          type: string
+          format: uuid
+        rhythmic_pattern:
+          type: array
+          items:
+            type: number
+        harmonic_content:
+          type: array
+          items:
+            type: number
+        timbre_features:
+          type: array
+          items:
+            type: number
+        tempo_stability:
+          type: number
+          minimum: 0
+          maximum: 1
