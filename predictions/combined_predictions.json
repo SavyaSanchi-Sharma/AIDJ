@@ -1,0 +1,323 @@
+{
+  "Britney Spears - ...Baby One More Time": [
+    {
+      "start": 0.0,
+      "end": 15.0,
+      "energy_level": 0.3554243029366611,
+      "energy_class": "low",
+      "mood": "sad"
+    },
+    {
+      "start": 15.0,
+      "end": 30.0,
+      "energy_level": 0.3773943241924536,
+      "energy_class": "low",
+      "mood": "sad"
+    },
+    {
+      "start": 30.0,
+      "end": 45.0,
+      "energy_level": 0.3831134079139862,
+      "energy_class": "low",
+      "mood": "sad"
+    },
+    {
+      "start": 45.0,
+      "end": 60.0,
+      "energy_level": 0.3453914420380864,
+      "energy_class": "low",
+      "mood": "sad"
+    },
+    {
+      "start": 60.0,
+      "end": 75.0,
+      "energy_level": 0.28127171978752635,
+      "energy_class": "low",
+      "mood": "sad"
+    },
+    {
+      "start": 75.0,
+      "end": 90.0,
+      "energy_level": 0.28852071561956144,
+      "energy_class": "low",
+      "mood": "sad"
+    },
+    {
+      "start": 90.0,
+      "end": 105.0,
+      "energy_level": 0.32112094689217296,
+      "energy_class": "low",
+      "mood": "sad"
+    },
+    {
+      "start": 105.0,
+      "end": 120.0,
+      "energy_level": 0.38703498344861176,
+      "energy_class": "low",
+      "mood": "sad"
+    },
+    {
+      "start": 120.0,
+      "end": 135.0,
+      "energy_level": 0.36763140610235673,
+      "energy_class": "low",
+      "mood": "sad"
+    },
+    {
+      "start": 135.0,
+      "end": 150.0,
+      "energy_level": 0.329475908797886,
+      "energy_class": "low",
+      "mood": "sad"
+    },
+    {
+      "start": 150.0,
+      "end": 165.0,
+      "energy_level": 0.26852921479704034,
+      "energy_class": "low",
+      "mood": "sad"
+    },
+    {
+      "start": 165.0,
+      "end": 180.0,
+      "energy_level": 0.25001852122808504,
+      "energy_class": "low",
+      "mood": "sad"
+    },
+    {
+      "start": 180.0,
+      "end": 195.0,
+      "energy_level": 0.2839912121148868,
+      "energy_class": "low",
+      "mood": "sad"
+    },
+    {
+      "start": 195.0,
+      "end": 210.0,
+      "energy_level": 0.3486118643075879,
+      "energy_class": "low",
+      "mood": "sad"
+    },
+    {
+      "start": 210.0,
+      "end": 225.0,
+      "energy_level": 0.39059613797851167,
+      "energy_class": "low",
+      "mood": "sad"
+    },
+    {
+      "start": 225.0,
+      "end": 240.0,
+      "energy_level": 0.3423272541986047,
+      "energy_class": "low",
+      "mood": "sad"
+    },
+    {
+      "start": 240.0,
+      "end": 255.0,
+      "energy_level": 0.2850329338664588,
+      "energy_class": "low",
+      "mood": "sad"
+    },
+    {
+      "start": 255.0,
+      "end": 270.0,
+      "energy_level": 0.2918787067662924,
+      "energy_class": "low",
+      "mood": "sad"
+    },
+    {
+      "start": 270.0,
+      "end": 285.0,
+      "energy_level": 0.3430955159961839,
+      "energy_class": "low",
+      "mood": "sad"
+    },
+    {
+      "start": 285.0,
+      "end": 300.0,
+      "energy_level": 0.3640765857208485,
+      "energy_class": "low",
+      "mood": "sad"
+    },
+    {
+      "start": 300.0,
+      "end": 315.0,
+      "energy_level": 0.331317773657779,
+      "energy_class": "low",
+      "mood": "sad"
+    }
+  ],
+  "Backstreet Boys - I Want It That Way": [
+    {
+      "start": 0.0,
+      "end": 15.0,
+      "energy_level": 0.27651986144561014,
+      "energy_class": "low",
+      "mood": "sad"
+    },
+    {
+      "start": 15.0,
+      "end": 30.0,
+      "energy_level": 0.3449282348571408,
+      "energy_class": "low",
+      "mood": "sad"
+    },
+    {
+      "start": 30.0,
+      "end": 45.0,
+      "energy_level": 0.4237630065540663,
+      "energy_class": "low",
+      "mood": "sad"
+    },
+    {
+      "start": 45.0,
+      "end": 60.0,
+      "energy_level": 0.46396161186803925,
+      "energy_class": "low",
+      "mood": "sad"
+    },
+    {
+      "start": 60.0,
+      "end": 75.0,
+      "energy_level": 0.4640051768302939,
+      "energy_class": "low",
+      "mood": "sad"
+    },
+    {
+      "start": 75.0,
+      "end": 90.0,
+      "energy_level": 0.4613111778065015,
+      "energy_class": "low",
+      "mood": "sad"
+    },
+    {
+      "start": 90.0,
+      "end": 105.0,
+      "energy_level": 0.4585699338770552,
+      "energy_class": "low",
+      "mood": "sad"
+    },
+    {
+      "start": 105.0,
+      "end": 120.0,
+      "energy_level": 0.43593011572336465,
+      "energy_class": "low",
+      "mood": "sad"
+    },
+    {
+      "start": 120.0,
+      "end": 135.0,
+      "energy_level": 0.4230711134715708,
+      "energy_class": "low",
+      "mood": "sad"
+    },
+    {
+      "start": 135.0,
+      "end": 150.0,
+      "energy_level": 0.4342867912529293,
+      "energy_class": "low",
+      "mood": "sad"
+    },
+    {
+      "start": 150.0,
+      "end": 165.0,
+      "energy_level": 0.47393498654455546,
+      "energy_class": "low",
+      "mood": "sad"
+    },
+    {
+      "start": 165.0,
+      "end": 180.0,
+      "energy_level": 0.4986424814487432,
+      "energy_class": "low",
+      "mood": "sad"
+    },
+    {
+      "start": 180.0,
+      "end": 195.0,
+      "energy_level": 0.5101697752362033,
+      "energy_class": "low",
+      "mood": "sad"
+    }
+  ],
+  "Spice Girls - Wannabe": [
+    {
+      "start": 0.0,
+      "end": 15.0,
+      "energy_level": 0.4643112508391134,
+      "energy_class": "low",
+      "mood": "sad"
+    },
+    {
+      "start": 15.0,
+      "end": 30.0,
+      "energy_level": 0.48302143540129255,
+      "energy_class": "low",
+      "mood": "sad"
+    },
+    {
+      "start": 30.0,
+      "end": 45.0,
+      "energy_level": 0.5113102397221971,
+      "energy_class": "low",
+      "mood": "sad"
+    },
+    {
+      "start": 45.0,
+      "end": 60.0,
+      "energy_level": 0.5153950643315108,
+      "energy_class": "low",
+      "mood": "sad"
+    },
+    {
+      "start": 60.0,
+      "end": 75.0,
+      "energy_level": 0.514723106663587,
+      "energy_class": "low",
+      "mood": "sad"
+    },
+    {
+      "start": 75.0,
+      "end": 90.0,
+      "energy_level": 0.5103880852683818,
+      "energy_class": "low",
+      "mood": "sad"
+    },
+    {
+      "start": 90.0,
+      "end": 105.0,
+      "energy_level": 0.5294134732880234,
+      "energy_class": "low",
+      "mood": "sad"
+    },
+    {
+      "start": 105.0,
+      "end": 120.0,
+      "energy_level": 0.5367601724203745,
+      "energy_class": "low",
+      "mood": "sad"
+    },
+    {
+      "start": 120.0,
+      "end": 135.0,
+      "energy_level": 0.5349226613308568,
+      "energy_class": "low",
+      "mood": "sad"
+    },
+    {
+      "start": 135.0,
+      "end": 150.0,
+      "energy_level": 0.5059064420089968,
+      "energy_class": "low",
+      "mood": "sad"
+    },
+    {
+      "start": 150.0,
+      "end": 165.0,
+      "energy_level": 0.4697909950009021,
+      "energy_class": "low",
+      "mood": "sad"
+    }
+  ]
+}

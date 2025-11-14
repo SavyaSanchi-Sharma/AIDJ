@@ -1,0 +1,79 @@
+[
+  {
+    "start": 0.0,
+    "end": 15.0,
+    "energy_level": 0.4643112508391134,
+    "energy_class": "low",
+    "mood": "sad"
+  },
+  {
+    "start": 15.0,
+    "end": 30.0,
+    "energy_level": 0.48302143540129255,
+    "energy_class": "low",
+    "mood": "sad"
+  },
+  {
+    "start": 30.0,
+    "end": 45.0,
+    "energy_level": 0.5113102397221971,
+    "energy_class": "low",
+    "mood": "sad"
+  },
+  {
+    "start": 45.0,
+    "end": 60.0,
+    "energy_level": 0.5153950643315108,
+    "energy_class": "low",
+    "mood": "sad"
+  },
+  {
+    "start": 60.0,
+    "end": 75.0,
+    "energy_level": 0.514723106663587,
+    "energy_class": "low",
+    "mood": "sad"
+  },
+  {
+    "start": 75.0,
+    "end": 90.0,
+    "energy_level": 0.5103880852683818,
+    "energy_class": "low",
+    "mood": "sad"
+  },
+  {
+    "start": 90.0,
+    "end": 105.0,
+    "energy_level": 0.5294134732880234,
+    "energy_class": "low",
+    "mood": "sad"
+  },
+  {
+    "start": 105.0,
+    "end": 120.0,
+    "energy_level": 0.5367601724203745,
+    "energy_class": "low",
+    "mood": "sad"
+  },
+  {
+    "start": 120.0,
+    "end": 135.0,
+    "energy_level": 0.5349226613308568,
+    "energy_class": "low",
+    "mood": "sad"
+  },
+  {
+    "start": 135.0,
+    "end": 150.0,
+    "energy_level": 0.5059064420089968,
+    "energy_class": "low",
+    "mood": "sad"
+  },
+  {
+    "start": 150.0,
+    "end": 165.0,
+    "energy_level": 0.4697909950009021,
+    "energy_class": "low",
+    "mood": "sad"
+  }
+]
