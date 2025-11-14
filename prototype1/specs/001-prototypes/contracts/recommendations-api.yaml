@@ -1,0 +1,374 @@
+openapi: 3.0.3
+info:
+  title: Recommendations API
+  version: 0.1.0
+  description: API for music recommendations and similarity search
+
+paths:
+  /recommendations/similar/{song_id}:
+    get:
+      summary: Get similar songs based on Musical DNA
+      parameters:
+        - name: song_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 10
+        - name: similarity_type
+          in: query
+          schema:
+            type: string
+            enum: [overall, harmonic, rhythmic, timbral, energy]
+            default: overall
+        - name: min_score
+          in: query
+          schema:
+            type: number
+            minimum: 0
+            maximum: 1
+            default: 0.3
+      responses:
+        '200':
+          description: List of similar songs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SimilarSong'
+        '404':
+          description: Song not found
+
+  /recommendations/mixable/{song_id}:
+    get:
+      summary: Get songs that mix well with the given song
+      parameters:
+        - name: song_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 10
+        - name: mixing_style
+          in: query
+          schema:
+            type: string
+            enum: [harmonic, energy_build, contrast, seamless]
+            default: harmonic
+      responses:
+        '200':
+          description: List of mixable songs with transition suggestions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MixableSong'
+        '404':
+          description: Song not found
+
+  /recommendations/stems/similar:
+    get:
+      summary: Find songs with similar stems (e.g., similar basslines)
+      parameters:
+        - name: stem_type
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [vocals, drums, bass, other, harmony]
+        - name: reference_song_id
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 10
+      responses:
+        '200':
+          description: Songs with similar stems
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StemSimilarity'
+
+  /recommendations/playlist/{playlist_id}/next:
+    get:
+      summary: Get next song recommendations for a playlist
+      parameters:
+        - name: playlist_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: current_position
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+            description: Current position in playlist
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 20
+            default: 5
+      responses:
+        '200':
+          description: Next song recommendations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PlaylistRecommendation'
+
+  /recommendations/user/{user_id}:
+    get:
+      summary: Get personalized recommendations for a user
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: context
+          in: query
+          schema:
+            type: string
+            enum: [discovery, workout, focus, party]
+            default: discovery
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 20
+      responses:
+        '200':
+          description: Personalized recommendations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PersonalizedRecommendation'
+
+components:
+  schemas:
+    SimilarSong:
+      type: object
+      properties:
+        song:
+          $ref: '#/components/schemas/Song'
+        similarity_score:
+          type: number
+          minimum: 0
+          maximum: 1
+          description: Overall similarity score
+        similarity_breakdown:
+          type: object
+          properties:
+            harmonic_compatibility:
+              type: number
+              minimum: 0
+              maximum: 1
+            rhythmic_similarity:
+              type: number
+              minimum: 0
+              maximum: 1
+            timbral_similarity:
+              type: number
+              minimum: 0
+              maximum: 1
+            energy_compatibility:
+              type: number
+              minimum: 0
+              maximum: 1
+        explanation:
+          type: string
+          description: Human-readable explanation of similarity
+          example: "Similar key (C Major to G Major) and matching energy progression"
+
+    MixableSong:
+      type: object
+      properties:
+        song:
+          $ref: '#/components/schemas/Song'
+        mix_compatibility:
+          type: number
+          minimum: 0
+          maximum: 1
+          description: How well this song mixes with the reference
+        transition_suggestion:
+          $ref: '#/components/schemas/TransitionSuggestion'
+        camelot_relationship:
+          type: string
+          description: Camelot wheel relationship
+          example: "Perfect 5th (8A → 3A)"
+
+    TransitionSuggestion:
+      type: object
+      properties:
+        transition_type:
+          type: string
+          enum: [crossfade, cut, echo_fade, backspin]
+        from_cue_time:
+          type: number
+          description: Optimal out point in current song (seconds)
+        to_cue_time:
+          type: number
+          description: Optimal in point in next song (seconds)
+        crossfade_duration:
+          type: number
+          description: Suggested crossfade duration (seconds)
+        eq_adjustments:
+          type: object
+          properties:
+            bass_cut:
+              type: number
+              minimum: -12
+              maximum: 12
+              description: Bass EQ adjustment in dB
+            mid_boost:
+              type: number
+              minimum: -12
+              maximum: 12
+            treble_adjustment:
+              type: number
+              minimum: -12
+              maximum: 12
+        effects_chain:
+          type: array
+          items:
+            type: object
+            properties:
+              effect_type:
+                type: string
+                enum: [reverb, delay, filter, phaser]
+              parameters:
+                type: object
+        confidence_score:
+          type: number
+          minimum: 0
+          maximum: 1
+          description: AI confidence in this transition
+
+    StemSimilarity:
+      type: object
+      properties:
+        song:
+          $ref: '#/components/schemas/Song'
+        stem_similarity_score:
+          type: number
+          minimum: 0
+          maximum: 1
+        stem_type:
+          type: string
+          enum: [vocals, drums, bass, other, harmony]
+        similarity_features:
+          type: object
+          properties:
+            rhythmic_pattern_match:
+              type: number
+              minimum: 0
+              maximum: 1
+            harmonic_content_match:
+              type: number
+              minimum: 0
+              maximum: 1
+            timbral_similarity:
+              type: number
+              minimum: 0
+              maximum: 1
+
+    PlaylistRecommendation:
+      type: object
+      properties:
+        song:
+          $ref: '#/components/schemas/Song'
+        fit_score:
+          type: number
+          minimum: 0
+          maximum: 1
+          description: How well this fits the playlist flow
+        transition_from_current:
+          $ref: '#/components/schemas/TransitionSuggestion'
+        reasoning:
+          type: string
+          description: Why this song was recommended
+          example: "Maintains energy level while shifting to complementary key"
+
+    PersonalizedRecommendation:
+      type: object
+      properties:
+        song:
+          $ref: '#/components/schemas/Song'
+        relevance_score:
+          type: number
+          minimum: 0
+          maximum: 1
+        recommendation_reason:
+          type: string
+          enum: [similar_to_liked, trending_in_genre, mix_complement, discovery]
+        context_fit:
+          type: number
+          minimum: 0
+          maximum: 1
+          description: How well this fits the requested context
+
+    Song:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        artist:
+          type: string
+        album:
+          type: string
+          nullable: true
+        duration:
+          type: number
+        musical_dna:
+          type: object
+          properties:
+            key_signature:
+              type: string
+            camelot_key:
+              type: string
+            bpm:
+              type: number
+            energy_level:
+              type: number
+              minimum: 0
+              maximum: 1

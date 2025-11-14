@@ -1,0 +1,150 @@
+services:
+  # PostgreSQL database with pgvector extension
+  db:
+    image: ankane/pgvector:v0.5.1
+    environment:
+      POSTGRES_DB: music_mixer
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Redis for caching and Celery results
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # RabbitMQ for task queue
+  rabbitmq:
+    image: rabbitmq:3.12-management
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - "5672:5672"
+      - "15672:15672"  # Management UI
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # API Service
+  api-service:
+    build:
+      context: ./api-service
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/music_mixer
+      - REDIS_URL=redis://redis:6379
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - SECRET_KEY=your-secret-key-change-in-production
+      - AUDIO_STORAGE_PATH=/app/data/audio
+      - GPU_ENABLED=false
+    volumes:
+      - audio_data:/app/data/audio
+      - ./api-service:/app
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # Stem Processing Service
+  stem-processing:
+    build:
+      context: ./stem-processing-service
+      dockerfile: Dockerfile
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/music_mixer
+      - REDIS_URL=redis://redis:6379
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - GPU_ENABLED=false  # Set to true if GPU available
+      - DEMUCS_MODEL_PATH=/app/models
+      - AUDIO_STORAGE_PATH=/app/data/audio
+    volumes:
+      - audio_data:/app/data/audio
+      - models_data:/app/models
+      - ./stem-processing-service:/app
+      - ./shared-libs:/app/shared-libs
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    restart: unless-stopped
+    # Uncomment for GPU support
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+
+  # Frontend Application
+  frontend:
+    build:
+      context: ./frontend-app
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:8000
+      - REACT_APP_WS_URL=ws://localhost:8000/ws
+    volumes:
+      - ./frontend-app:/app
+      - /app/node_modules
+    depends_on:
+      - api-service
+    restart: unless-stopped
+
+  # Task Queue Monitor (Flower)
+  flower:
+    build:
+      context: ./stem-processing-service
+      dockerfile: Dockerfile
+    command: celery flower -A src.celery_app --port=5555 --broker=amqp://guest:guest@rabbitmq:5672
+    ports:
+      - "5555:5555"
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+    depends_on:
+      - rabbitmq
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
+  rabbitmq_data:
+  audio_data:
+  models_data:
+
+networks:
+  default:
+    driver: bridge

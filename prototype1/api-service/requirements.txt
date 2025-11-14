@@ -1,0 +1,40 @@
+# API Framework
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+python-multipart==0.0.6
+
+# Database & Caching
+sqlalchemy==2.0.23
+alembic==1.12.1
+psycopg2-binary==2.9.9
+pgvector==0.2.4
+redis==5.0.1
+
+# Task Queue
+celery==5.3.4
+redis==5.0.1
+
+# ML & Audio Processing
+numpy==1.25.2
+librosa==0.10.1
+essentia-tensorflow==2.1b6.dev1110
+faiss-gpu==1.7.4
+
+# API & Validation
+pydantic==2.5.0
+pydantic-settings==2.1.0
+
+# Utilities
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+python-dotenv==1.0.0
+aiofiles==23.2.1
+
+# Development & Testing
+pytest==7.4.3
+pytest-asyncio==0.21.1
+httpx==0.25.2
+pytest-cov==4.1.0
+
+# Monitoring & Logging
+structlog==23.2.0

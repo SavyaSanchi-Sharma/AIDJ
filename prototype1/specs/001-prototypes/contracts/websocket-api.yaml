@@ -1,0 +1,465 @@
+asyncapi: 2.6.0
+info:
+  title: Real-time Mixing WebSocket API
+  version: 0.1.0
+  description: WebSocket API for real-time mixing session updates and audio processing status
+
+servers:
+  production:
+    url: ws://localhost:8000/ws
+    protocol: ws
+    description: WebSocket server for real-time updates
+
+channels:
+  /mixing-session/{session_id}:
+    parameters:
+      session_id:
+        description: The mixing session ID
+        schema:
+          type: string
+          format: uuid
+    subscribe:
+      summary: Subscribe to mixing session updates
+      message:
+        oneOf:
+          - $ref: '#/components/messages/SessionUpdate'
+          - $ref: '#/components/messages/CuePointUpdate'
+          - $ref: '#/components/messages/ProcessingStatus'
+          - $ref: '#/components/messages/ErrorMessage'
+    publish:
+      summary: Send mixing session commands
+      message:
+        oneOf:
+          - $ref: '#/components/messages/MixCommand'
+          - $ref: '#/components/messages/LoadTrack'
+          - $ref: '#/components/messages/SetCueTime'
+
+  /audio-processing/{song_id}:
+    parameters:
+      song_id:
+        description: The song ID being processed
+        schema:
+          type: string
+          format: uuid
+    subscribe:
+      summary: Subscribe to audio processing status
+      message:
+        oneOf:
+          - $ref: '#/components/messages/ProcessingProgress'
+          - $ref: '#/components/messages/StemSeparationComplete'
+          - $ref: '#/components/messages/MusicalDNAComplete'
+          - $ref: '#/components/messages/ProcessingError'
+
+  /recommendations/{user_id}:
+    parameters:
+      user_id:
+        description: The user ID for personalized updates
+        schema:
+          type: string
+          format: uuid
+    subscribe:
+      summary: Subscribe to real-time recommendation updates
+      message:
+        oneOf:
+          - $ref: '#/components/messages/NewRecommendation'
+          - $ref: '#/components/messages/SimilarSongFound'
+
+components:
+  messages:
+    SessionUpdate:
+      name: sessionUpdate
+      title: Mixing Session Update
+      summary: Real-time updates to mixing session state
+      contentType: application/json
+      payload:
+        type: object
+        properties:
+          type:
+            type: string
+            const: session_update
+          session_id:
+            type: string
+            format: uuid
+          timestamp:
+            type: string
+            format: date-time
+          data:
+            type: object
+            properties:
+              crossfader_position:
+                type: number
+                minimum: -1
+                maximum: 1
+              deck_a_cue_time:
+                type: number
+                description: Current position on deck A (seconds)
+              deck_b_cue_time:
+                type: number
+                description: Current position on deck B (seconds)
+              deck_a_playing:
+                type: boolean
+              deck_b_playing:
+                type: boolean
+              mix_parameters:
+                type: object
+                properties:
+                  deck_a_eq:
+                    $ref: '#/components/schemas/EQSettings'
+                  deck_b_eq:
+                    $ref: '#/components/schemas/EQSettings'
+                  deck_a_gain:
+                    type: number
+                    minimum: 0
+                    maximum: 2
+                  deck_b_gain:
+                    type: number
+                    minimum: 0
+                    maximum: 2
+
+    MixCommand:
+      name: mixCommand
+      title: Mixing Command
+      summary: Commands sent from client to update mixing state
+      contentType: application/json
+      payload:
+        type: object
+        properties:
+          type:
+            type: string
+            enum: [play, pause, cue, crossfade, eq_update, effect_toggle]
+          deck:
+            type: string
+            enum: [a, b]
+          data:
+            type: object
+            description: Command-specific data
+        required:
+          - type
+
+    CuePointUpdate:
+      name: cuePointUpdate
+      title: Cue Point Detection Update
+      summary: AI-detected cue points for loaded tracks
+      contentType: application/json
+      payload:
+        type: object
+        properties:
+          type:
+            type: string
+            const: cue_points_detected
+          session_id:
+            type: string
+            format: uuid
+          deck:
+            type: string
+            enum: [a, b]
+          cue_points:
+            type: array
+            items:
+              type: object
+              properties:
+                time:
+                  type: number
+                  description: Time position in seconds
+                cue_type:
+                  type: string
+                  enum: [intro_start, verse_start, chorus_start, breakdown, buildup, drop, outro_start]
+                confidence:
+                  type: number
+                  minimum: 0
+                  maximum: 1
+                energy_level:
+                  type: number
+                  minimum: 0
+                  maximum: 1
+
+    LoadTrack:
+      name: loadTrack
+      title: Load Track Command
+      summary: Load a track onto a deck
+      contentType: application/json
+      payload:
+        type: object
+        properties:
+          type:
+            type: string
+            const: load_track
+          deck:
+            type: string
+            enum: [a, b]
+          song_id:
+            type: string
+            format: uuid
+        required:
+          - type
+          - deck
+          - song_id
+
+    SetCueTime:
+      name: setCueTime
+      title: Set Cue Time Command
+      summary: Set playback position on a deck
+      contentType: application/json
+      payload:
+        type: object
+        properties:
+          type:
+            type: string
+            const: set_cue_time
+          deck:
+            type: string
+            enum: [a, b]
+          time:
+            type: number
+            minimum: 0
+            description: Cue time in seconds
+        required:
+          - type
+          - deck
+          - time
+
+    ProcessingStatus:
+      name: processingStatus
+      title: Processing Status Update
+      summary: Status updates for audio processing tasks
+      contentType: application/json
+      payload:
+        type: object
+        properties:
+          type:
+            type: string
+            const: processing_status
+          song_id:
+            type: string
+            format: uuid
+          status:
+            type: string
+            enum: [pending, processing, completed, failed]
+          progress:
+            type: number
+            minimum: 0
+            maximum: 100
+            description: Completion percentage
+          current_step:
+            type: string
+            enum: [stem_separation, feature_extraction, vector_generation, similarity_indexing]
+          estimated_remaining:
+            type: number
+            description: Estimated seconds remaining
+
+    ProcessingProgress:
+      name: processingProgress
+      title: Processing Progress Update
+      summary: Detailed progress for audio processing pipeline
+      contentType: application/json
+      payload:
+        type: object
+        properties:
+          type:
+            type: string
+            const: processing_progress
+          song_id:
+            type: string
+            format: uuid
+          step:
+            type: string
+            enum: [stem_separation, feature_extraction, vector_generation, similarity_indexing]
+          progress:
+            type: number
+            minimum: 0
+            maximum: 100
+          details:
+            type: object
+            properties:
+              demucs_progress:
+                type: number
+                minimum: 0
+                maximum: 100
+              stems_completed:
+                type: array
+                items:
+                  type: string
+                  enum: [vocals, drums, bass, other]
+              features_extracted:
+                type: boolean
+              vectors_generated:
+                type: boolean
+
+    StemSeparationComplete:
+      name: stemSeparationComplete
+      title: Stem Separation Complete
+      summary: Notification when stem separation is finished
+      contentType: application/json
+      payload:
+        type: object
+        properties:
+          type:
+            type: string
+            const: stem_separation_complete
+          song_id:
+            type: string
+            format: uuid
+          stems:
+            type: array
+            items:
+              type: object
+              properties:
+                stem_type:
+                  type: string
+                  enum: [vocals, drums, bass, other]
+                confidence_score:
+                  type: number
+                  minimum: 0
+                  maximum: 1
+                file_path:
+                  type: string
+
+    MusicalDNAComplete:
+      name: musicalDNAComplete
+      title: Musical DNA Analysis Complete
+      summary: Notification when Musical DNA analysis is finished
+      contentType: application/json
+      payload:
+        type: object
+        properties:
+          type:
+            type: string
+            const: musical_dna_complete
+          song_id:
+            type: string
+            format: uuid
+          musical_dna:
+            type: object
+            properties:
+              key_signature:
+                type: string
+              camelot_key:
+                type: string
+              bpm:
+                type: number
+              energy_curve:
+                type: array
+                items:
+                  type: number
+                  minimum: 0
+                  maximum: 1
+
+    NewRecommendation:
+      name: newRecommendation
+      title: New Recommendation Available
+      summary: Real-time recommendation based on user activity
+      contentType: application/json
+      payload:
+        type: object
+        properties:
+          type:
+            type: string
+            const: new_recommendation
+          user_id:
+            type: string
+            format: uuid
+          context:
+            type: string
+            enum: [similar_to_current, mix_complement, discovery, trending]
+          recommendation:
+            type: object
+            properties:
+              song_id:
+                type: string
+                format: uuid
+              title:
+                type: string
+              artist:
+                type: string
+              relevance_score:
+                type: number
+                minimum: 0
+                maximum: 1
+              reason:
+                type: string
+                description: Human-readable explanation
+
+    SimilarSongFound:
+      name: similarSongFound
+      title: Similar Song Found
+      summary: Notification when a highly similar song is discovered
+      contentType: application/json
+      payload:
+        type: object
+        properties:
+          type:
+            type: string
+            const: similar_song_found
+          reference_song_id:
+            type: string
+            format: uuid
+          similar_song_id:
+            type: string
+            format: uuid
+          similarity_score:
+            type: number
+            minimum: 0
+            maximum: 1
+          similarity_type:
+            type: string
+            enum: [harmonic, rhythmic, timbral, overall, stem_similarity]
+
+    ProcessingError:
+      name: processingError
+      title: Processing Error
+      summary: Error during audio processing
+      contentType: application/json
+      payload:
+        type: object
+        properties:
+          type:
+            type: string
+            const: processing_error
+          song_id:
+            type: string
+            format: uuid
+          error_code:
+            type: string
+            enum: [invalid_format, corruption, gpu_error, timeout, model_error]
+          message:
+            type: string
+          retry_possible:
+            type: boolean
+
+    ErrorMessage:
+      name: errorMessage
+      title: General Error Message
+      summary: General error messages for WebSocket communication
+      contentType: application/json
+      payload:
+        type: object
+        properties:
+          type:
+            type: string
+            const: error
+          error_code:
+            type: string
+          message:
+            type: string
+          details:
+            type: object
+
+  schemas:
+    EQSettings:
+      type: object
+      properties:
+        bass:
+          type: number
+          minimum: -12
+          maximum: 12
+          description: Bass adjustment in dB
+        mid:
+          type: number
+          minimum: -12
+          maximum: 12
+          description: Mid adjustment in dB
+        treble:
+          type: number
+          minimum: -12
+          maximum: 12
+          description: Treble adjustment in dB
