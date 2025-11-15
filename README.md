@@ -11,9 +11,9 @@ AIDJ is an end-to-end AI system that transforms natural language prompts into cu
 ## 👥 Team Members
 
 
-**Savya Sanchi Sharma** [@SavyaSanchi-Sharma](https://github.com/SavyaSanchi-Sharma)
-**Dhrupad Das** [@Ddas](https://github.com/Ddas-10)
-**Avishi Agrawal** [@Avishi](https://github.com/Avishi03)
+**Savya Sanchi Sharma** [@SavyaSanchi-Sharma](https://github.com/SavyaSanchi-Sharma)<br>
+**Dhrupad Das** [@Ddas](https://github.com/Ddas-10)<br>
+**Avishi Agrawal** [@Avishi](https://github.com/Avishi03)<br>
 **Aditya Guntur** [@Aditya](https://github.com/Aditya-Guntur)
 
 ---
@@ -57,15 +57,7 @@ The AIDJ workflow is divided into two core stages:
 ---
 
 ## 🎬 Demo Video
-
-> **[▶️ Watch 2-Minute Demo](YOUR_VIDEO_LINK_HERE)**
-
-*A quick walkthrough showing:*
-- Natural language prompt input
-- Automatic track discovery and download
-- Audio analysis and feature extraction
-- ML predictions and segment identification
-- Output JSON generation
+Provided in Repository
 
 ---
 
