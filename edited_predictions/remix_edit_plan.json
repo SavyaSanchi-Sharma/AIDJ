@@ -1,0 +1,52 @@
+[
+  {
+    "track": "Megan Thee Stallion, Beyonc\u00e9 - Savage Remix (feat. Beyonc\u00e9)",
+    "sections": [
+      {
+        "start": 195.0,
+        "end": 210.0,
+        "energy_level": 0.6040606458446831,
+        "mood": "energetic",
+        "edit_action": "KEEP",
+        "notes": "Starting the mashup with a powerful, high-energy rap section from Megan, immediately setting an energetic, club-ready tone."
+      },
+      {
+        "start": 90.0,
+        "end": 105.0,
+        "energy_level": 0.5922842134993282,
+        "mood": "happy",
+        "edit_action": "TRANSITION",
+        "notes": "Transitioning back to Savage Remix with another high-energy, happy segment, likely Beyonc\u00e9's iconic verse, to re-energize the mix after the N95 interlude and build on the party vibe."
+      },
+      {
+        "start": 210.0,
+        "end": 225.0,
+        "energy_level": 0.6378351276346893,
+        "mood": "happy",
+        "edit_action": "TRANSITION",
+        "notes": "Bringing in the absolute highest energy section of Savage Remix as the powerful climax and memorable finale of the mashup, leaving the audience on a high note."
+      }
+    ]
+  },
+  {
+    "track": "Kendrick Lamar - N95",
+    "sections": [
+      {
+        "start": 45.0,
+        "end": 60.0,
+        "energy_level": 0.5316336101620669,
+        "mood": "sad",
+        "edit_action": "TRANSITION",
+        "notes": "Introducing a stark contrast with Kendrick Lamar's intense and darker vocal delivery. This section provides a dynamic shift in mood and energy, offering a moment of serious intensity before returning to high energy."
+      },
+      {
+        "start": 135.0,
+        "end": 150.0,
+        "energy_level": 0.5073892744316849,
+        "mood": "sad",
+        "edit_action": "TRANSITION",
+        "notes": "A brief, impactful return to N95, serving as a short, suspenseful bridge or a distinct vocal interjection to add another layer of texture and anticipation before the final Savage Remix drop."
+      }
+    ]
+  }
+]

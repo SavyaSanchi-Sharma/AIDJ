@@ -63,10 +63,10 @@ def predict_multiple_songs(audio_dir_or_list):
         song_key = os.path.splitext(os.path.basename(file_path))[0]
         all_results[song_key] = preds
 
-        indiv_out = os.path.join(OUTPUT_DIR, song_key + "_predictions.json")
-        with open(indiv_out, "w") as f:
-            json.dump(preds, f, indent=2)
-        print(f"✅ Saved individual predictions → {indiv_out}")
+        # indiv_out = os.path.join(OUTPUT_DIR, song_key + "_predictions.json")
+        # with open(indiv_out, "w") as f:
+        #     json.dump(preds, f, indent=2)
+        # print(f"✅ Saved individual predictions → {indiv_out}")
 
     combined_out = os.path.join(OUTPUT_DIR, "combined_predictions.json")
     with open(combined_out, "w") as f:

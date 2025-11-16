@@ -5,66 +5,113 @@ import os
 import json
 from pydub import AudioSegment
 
-AUDIO_DIR = "audio"
+AUDIO_DIR = "audio_files"
 EDIT_JSON_DIR = "edited_predictions"
 OUTPUT_DIR = "edited_audio"
-FADE_DURATION_MS = 1000  # fade-in/out duration for transitions
 
-def apply_edits_to_track(audio_path, edit_json_path):
-    print(f"🎵 Processing {os.path.basename(audio_path)} using {os.path.basename(edit_json_path)}")
+FADE_DURATION_MS = 1000  # fade-in/out for TRANSITION
+FINAL_OUTPUT_NAME = "final_remix.wav"
+
+
+def safe_filename(track_name: str):
+    """
+    Convert the LLM track name directly to a .wav filename.
+    Your audio files must match this convention.
+    """
+    return track_name.strip() + ".wav"
+
+
+def apply_edits(audio_path, sections):
+    """
+    Apply KEEP / CUT / TRANSITION edits to a single track.
+    Returns an AudioSegment containing the edited audio.
+    """
 
     audio = AudioSegment.from_file(audio_path)
-    with open(edit_json_path, "r") as f:
-        edit_plan = json.load(f)
-
     edited_segments = []
 
-    for section in edit_plan.get("sections", []):
+    for section in sections:
         start_ms = int(section["start"] * 1000)
         end_ms = int(section["end"] * 1000)
         action = section.get("edit_action", "KEEP").upper()
+        notes = section.get("notes", "")
 
         if start_ms >= len(audio):
             continue
-        end_ms = min(end_ms, len(audio))
 
+        end_ms = min(end_ms, len(audio))
         segment = audio[start_ms:end_ms]
 
         if action == "CUT":
-            print(f"⏭️  Skipping {start_ms/1000:.1f}s–{end_ms/1000:.1f}s ({section.get('notes', '')})")
+            print(f"⏭️  CUT {start_ms/1000:.1f}s–{end_ms/1000:.1f}s ({notes})")
             continue
+
         elif action == "TRANSITION":
+            print(f"🔄 TRANSITION {start_ms/1000:.1f}s–{end_ms/1000:.1f}s")
             segment = segment.fade_in(FADE_DURATION_MS).fade_out(FADE_DURATION_MS)
-            print(f"🔄 Transition: {start_ms/1000:.1f}s–{end_ms/1000:.1f}s")
+
         else:
-            print(f"🎬 Keeping: {start_ms/1000:.1f}s–{end_ms/1000:.1f}s")
+            print(f"🎬 KEEP {start_ms/1000:.1f}s–{end_ms/1000:.1f}s ({notes})")
 
         edited_segments.append(segment)
 
     if not edited_segments:
-        print("⚠️ No segments kept — skipping export.")
-        return
+        print("⚠️ No segments kept for this track.")
+        return None
 
-    final_track = sum(edited_segments)
-    os.makedirs(OUTPUT_DIR, exist_ok=True)
+    return sum(edited_segments)
 
-    track_name = os.path.splitext(os.path.basename(audio_path))[0]
-    output_path = os.path.join(OUTPUT_DIR, f"{track_name}_edited.wav")
-    final_track.export(output_path, format="wav")
 
-    print(f"✅ Saved edited track: {output_path}")
+def create_remix(json_path):
+    """
+    Creates ONE combined remix from all tracks inside the JSON file.
+    """
 
-def edit():
-    os.makedirs(OUTPUT_DIR, exist_ok=True)
-    json_files = [f for f in os.listdir(EDIT_JSON_DIR) if f.endswith("_edited.json")]
+    print(f"\n📄 Loading multi-track edit file: {json_path}")
 
-    for json_file in json_files:
-        track_name = json_file.replace("_edited.json", "")
-        audio_path = os.path.join(AUDIO_DIR, f"{track_name}.wav")
-        edit_json_path = os.path.join(EDIT_JSON_DIR, json_file)
+    with open(json_path, "r") as f:
+        track_list = json.load(f)
+
+    final_mix = AudioSegment.silent(duration=0)
+
+    for entry in track_list:
+        track_name = entry["track"]
+        sections = entry["sections"]
+
+        filename = safe_filename(track_name)
+        audio_path = os.path.join(AUDIO_DIR, filename)
 
         if not os.path.exists(audio_path):
-            print(f"⚠️ Audio not found for {track_name}, skipping.")
+            print(f"⚠️ Missing audio file for: {track_name} ({filename})")
             continue
 
-        apply_edits_to_track(audio_path, edit_json_path)
+        print(f"\n🎧 Editing track: {track_name}")
+        edited_track = apply_edits(audio_path, sections)
+
+        if edited_track:
+            final_mix += edited_track  # append to remix
+
+    if len(final_mix) == 0:
+        print("❌ No audio could be mixed. Nothing exported.")
+        return
+
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+    out_path = os.path.join(OUTPUT_DIR, FINAL_OUTPUT_NAME)
+    final_mix.export(out_path, format="wav")
+
+    print(f"\n🎉 ALL DONE!")
+    print(f"🔥 Remix saved → {out_path}")
+
+
+def edit():
+    """
+    Runs the editor on ALL multi-track JSONs in EDIT_JSON_DIR,
+    producing one remix per JSON.
+    """
+    for filename in os.listdir(EDIT_JSON_DIR):
+        if filename.endswith(".json"):
+            create_remix(os.path.join(EDIT_JSON_DIR, filename))
+
+
+if __name__ == "__main__":
+    edit()
